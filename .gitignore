@@ -1,1 +1,8 @@
+# Aqui van todos los archivos y carpetas que no van al repositorio
+
 .venv/*
+
+guide
+
+__pycache__
+__pycache__/routes.cpython-312.pyc
