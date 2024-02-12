@@ -72,3 +72,58 @@ a {
 a:hover {
   color: rgb(19, 204, 250);
 }
+
+
+input {
+  border: none;
+  background-color: rgb(156, 209, 255);
+  padding: 5px 10px;
+  margin-bottom: 15px;
+}
+
+
+
+div.container {
+  width: 100vw;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.formulario {
+  width: 25%;
+  background-color: aliceblue;
+  border-radius: 2px;
+  padding: 10px;
+}
+
+#num {
+  width: 80px;
+}
+
+select {
+  margin: 8px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 10px;
+}
+
+label {
+  font-weight: 600;
+}
+
+button {
+  border: none;
+  padding: 10px 20px;
+  background-color: rgb(99, 203, 255);
+  border-radius: 5px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: .5s;
+}
+
+button:hover {
+  background-color: blue;
+}
