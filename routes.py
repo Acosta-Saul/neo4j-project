@@ -363,7 +363,62 @@ def interfaz2():
 def interfaz3():
   return render_template('interfaz3.html')
 
+def borrar_nodo_y_relaciones_por_nombre(name):
+    try:
+        # Imprimir el nombre del nodo antes de borrarlo
+        print("Borrando nodo:", name)
 
-@app.route('/delete')
+        # Construir la consulta Cypher para eliminar las relaciones del nodo
+        cypher_query_relaciones = f"MATCH (n:Family_A{{name:'{name}'}})-[r]-() DELETE r"
+
+        # Imprimir la consulta antes de ejecutarla
+        print("Consulta Neo4j para eliminar relaciones:", cypher_query_relaciones)
+
+        # Ejecutar la consulta para eliminar relaciones utilizando la sesión directamente
+        with driver.session() as session:
+            session.run(cypher_query_relaciones)
+
+        # Construir la consulta Cypher para borrar el nodo
+        cypher_query_borrar = f"MATCH (n:Family_A{{name:'{name}'}}) DELETE n"
+
+        # Imprimir la consulta antes de ejecutarla
+        print("Consulta Neo4j para borrar nodo:", cypher_query_borrar)
+
+        # Ejecutar la consulta para borrar el nodo utilizando la sesión directamente
+        with driver.session() as session:
+            session.run(cypher_query_borrar)
+
+        print("Nodo y relaciones borradas exitosamente.")
+    except Exception as e:
+        # Imprimir cualquier error que ocurra durante la ejecución
+        print("Error en la ejecución de la consulta:", str(e))
+
+
+@app.route('/delete', methods=['GET', 'POST'])
 def interfaz4():
-  return render_template('interfaz4.html')
+    bandera = '0'
+
+    if request.method == 'POST' and 'bandera' in request.form:
+        if request.form['bandera'] == '1':
+            arbol_seleccionado = request.form['arbol']
+            nodos_a_borrar = obtener_nodos_relacionados(arbol_seleccionado)
+            bandera = request.form['bandera']
+            return render_template('interfaz4.html', nodos_a_borrar=nodos_a_borrar, bandera=bandera)
+
+        elif request.form['bandera'] == '2':
+            # Obtener el nombre del nodo a borrar
+            nodo_a_borrar_nombre = request.form.get('nodo_seleccionado')
+
+            if nodo_a_borrar_nombre:
+                # Agregar una impresión de log para verificar el nombre del nodo antes de intentar borrarlo
+                print("Nombre del nodo a borrar:", nodo_a_borrar_nombre)
+
+                # Implementar la lógica para borrar el nodo seleccionado por nombre y sus relaciones
+                borrar_nodo_y_relaciones_por_nombre(nodo_a_borrar_nombre)
+
+                # Redirigir a la interfaz deseada después de borrar el nodo
+                return render_template('interfaz4.html', bandera='2')
+
+    return render_template('interfaz4.html', bandera=bandera)
+
+
