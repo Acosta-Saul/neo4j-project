@@ -357,11 +357,75 @@ def interfaz2():
 
 
 
+def get_nodos():
+    # Función para obtener todos los nodos de la base de datos con sus IDs
+    query = "MATCH (n) RETURN id(n) AS id, n"
+    result = session.run(query)
+    nodos = [(record["id"], record["n"]) for record in result]
+    return nodos
+
+def Actulizar_nodo(nodo_id, update_node):
+    try:
+        query_actualizar = f"""
+        MATCH (n) WHERE id(n) = {nodo_id}
+        SET n.name = '{update_node['nombre']}',
+            n.apellido = '{update_node['apellido']}',
+            n.edad = {update_node['edad']},
+            n.actividad = '{update_node['actividad']}',
+            n.gustos = {update_node['gustos']},
+            n.disgusto = '{update_node['disgusto']}',
+            n.defuncion = '{update_node['defuncion']}'
+        """
+        
+        # Imprimir la consulta Cypher para verificarla
+        print("Consulta Cypher:", query_actualizar)
+        
+        with driver.session() as session:
+            session.run(query_actualizar)
+    except Exception as e:
+        # Imprimir cualquier error que ocurra durante la ejecución
+        print("Error en la ejecución de la consulta:", str(e))
 
 
-@app.route('/update')
+# Página para actualizar nodos
+@app.route('/update', methods=['GET', 'POST'])
 def interfaz3():
-  return render_template('interfaz3.html')
+    bandera = '0'
+    nodos = get_nodos()  # Obtener los nodos de la base de datos
+
+    if request.method == 'POST' and 'bandera' in request.form:
+        if request.form['bandera'] == '1':
+            nodo_id = request.form['nodo_id']
+            bandera = request.form['bandera']
+            return render_template('interfaz3.html', nodos=nodos, nodo_id=nodo_id, bandera=bandera)
+
+        elif request.form['bandera'] == '2':
+            nodo_id = request.form['nodo_id']
+            if nodo_id:
+                update_node = {
+                    'nombre': request.form['nombre'],
+                    'apellido': request.form['apellido'],
+                    'edad': request.form['edad'],
+                    'actividad': request.form['actividad'],
+                    'gustos': [request.form['gusto1'], request.form['gusto2']],
+                    'disgusto': request.form['disgusto'],
+                    'defuncion': request.form['defuncion']
+                }
+                Actulizar_nodo(nodo_id, update_node)
+            return render_template('interfaz3.html', bandera='2', nodos=nodos)
+        
+    return render_template('interfaz3.html', bandera=bandera, nodos=nodos)
+
+
+
+
+
+
+
+
+
+
+
 
 def borrar_nodo_y_relaciones_por_nombre(name):
     try:
