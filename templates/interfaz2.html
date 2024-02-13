@@ -26,11 +26,14 @@
       <input type="radio" name="arbol" value="Saúl" required> Saúl
       <br>
       <input type="number" name="bandera" value="1" hidden>
-      <button type="submit">Consultar nodos</button>
+      <button type="submit">Siguiente</button>
 
     </form>
   </div>
   {%endif%}
+
+
+
   {%if bandera == '1' %}
   <div class="formulario">
 
@@ -40,41 +43,33 @@
 
     <form action="" method="post">
 
-      <h4>Seleccione el nodo con el que estara relacionado</h4>
-      <br>
-      <select name="nodo" id="">
-        {%for nodo in nodos %}
-        <option value="{{nodo['name']}}">{{nodo['name']}}</option>
-        {%endfor%}
-      </select>
-      <br>
       <h4>Seleccione el tipo de relacion</h4>
+      <br>
       <select name="relacion" id="">
         <option value="AMIGO_DE">Amigo de</option>
         <option value="PADRE_DE">Padre de</option>
         <option value="CASADO_CON">Casado con</option>
+        <option value="PARIENTE_DE">Pariente de</option>
       </select>
       <input type="text" name="bandera" value="2" hidden>
+      <input type="text" name="nodo_raiz" value="{{nodo_raiz}}" hidden>
+
       <br>
-      <button type="submit">Relacionar Nodo</button>
+      <button type="submit">Siguiente</button>
 
     </form>
   </div>
   {%endif%}
-  {%if bandera == '2' %}
+
+
+  {%if bandera == '3' %}
+
   <div class="formulario">
 
-    <h2
-      style="margin:10px; text-align: center; color: rgba(34, 188, 249, 0.971);font-size: 35px; border-bottom: 3px solid rgb(5, 3, 3);">
-      Nuevo Nodo</h2>
-
     <form action="" method="post">
-
-      <input type="text" name="nodo_dirigido" value="{{nodo}}" hidden id="">
-      <input type="text" name="relacion_dirigida" value="{{relacion}}" hidden id="">
-      <input type="text" name="bandera" value="3" hidden id="">
-
-
+      <h2
+        style="margin:10px; text-align: center; color: rgba(34, 188, 249, 0.971);font-size: 35px; border-bottom: 3px solid rgb(5, 3, 3);">
+        Nuevo Nodo</h2>
       <label for="nombre">Nombre: </label>
       <input type="text" name="nombre">
       <br>
@@ -161,25 +156,175 @@
         <option>No</option>
       </select>
       <br>
-      </select>
 
-
+      <input type="text" name="nodo_raiz" value="{{nodo_raiz}}" hidden id="">
+      <input type="text" name="relacion" value="{{relacion}}" hidden id="">
+      <input type="text" name="bandera" value="4" hidden id="">
 
       <button type="submit">Crear</button>
 
     </form>
+
+
   </div>
+
+
+
   {%endif%}
 
-  {% if bandera == '3' %}
+  {%if bandera == '4' %}
+
+  <div class="formulario">
+
+    <form action="" method="post">
+
+      <h4>Seleccione un nodo</h4>
+      <select name="nodo_asignado" id="">
+        <option value="{{nodo_raiz}}">Nodo raiz->({{nodo_raiz}})</option>
+        {%for nodo in nodos_relacionados %}
+        <option value="{{nodo['name']}}">{{nodo['name']}}</option>
+        {%endfor%}
+      </select>
+
+      <input type="text" name="relacion" value="{{relacion}}" hidden id="">
+      <input type="text" name="nodo_raiz" value="{{nodo_raiz}}" hidden id="">
+      <input type="text" name="bandera" value="5" hidden id="">
+
+      <button type="submit">Siguiente</button>
+
+    </form>
+
+  </div>
+
+
+
+  {%endif%}
+
+
+
+  {%if bandera == '5' %}
+
+  <div class="formulario">
+    <form action="" method="post">
+
+      <input type="text" name="nodo_raiz" value="{{nodo_raiz}}" id="">
+      <input type="text" name="nodo_asignado" value="{{nodo_asignado}}" id="">
+      <input type="text" name="relacion" value="{{relacion}}" id="">
+      <input type="text" name="bandera" value="6" hidden id="">
+
+
+      <h2
+        style="margin:10px; text-align: center; color: rgba(34, 188, 249, 0.971);font-size: 35px; border-bottom: 3px solid rgb(5, 3, 3);">
+        Nuevo Nodo</h2>
+      <label for="nombre">Nombre: </label>
+      <input type="text" name="nombre">
+      <br>
+      <label for="apellido">Apellido: </label>
+      <input type="text" name="apellido">
+      <br>
+      <label for="edad">Edad: </label>
+      <input type="number" name="edad" id="num">
+      <br>
+      <label for="actividad">Actividad:</label>
+      <select name="actividad" required>
+        <option>Profesor</option>
+        <option value="Ingeniero">Ingeniero</option>
+        <option value="Militar">Militar</option>
+        <option value="Psicólogo">Psicólogo</option>
+        <option value="Estudiante">Estudiante</option>
+        <option value="Abogado">Abogado</option>
+        <option value="Médico">Médico</option>
+        <option value="Veterinario">Veterinario</option>
+        <option value="Otros">Otros</option>
+      </select>
+      <br>
+      <label for="gusto1">Gusto 1:</label>
+      <select name="gusto1" id="gusto1" required onchange="updateOptions()">
+        <option value="">Seleccione una opcion</option>
+        <option value="Música">Música</option>
+        <option value="Fútbol">Fútbol</option>
+        <option value="Beisbol">Beisbol</option>
+        <option value="Voleibol">Voleibol</option>
+        <option value="Películas">Películas</option>
+        <option value="Tecnologías">Tecnologías</option>
+        <option value="Viajar">Viajar</option>
+        <option value="Leer">Leer</option>
+        <option value="Autos">Autos</option>
+        <option value="Motos">Motos</option>
+        <option value="Gatos">Gatos</option>
+        <option value="Perros">Perros</option>
+        <option value="Naturaleza">Naturaleza</option>
+        <option value="Otros">Otros</option>
+      </select>
+      <br>
+      <label for="gusto2">Gusto 2:</label>
+      <select name="gusto2" id="gusto2" required onchange="updateOptions()">
+        <option value="">Seleccione una opcion</option>
+        <option value="Música">Música</option>
+        <option value="Fútbol">Fútbol</option>
+        <option value="Beisbol">Beisbol</option>
+        <option value="Voleibol">Voleibol</option>
+        <option value="Películas">Películas</option>
+        <option value="Tecnologías">Tecnologías</option>
+        <option value="Viajar">Viajar</option>
+        <option value="Leer">Leer</option>
+        <option value="Autos">Autos</option>
+        <option value="Motos">Motos</option>
+        <option value="Gatos">Gatos</option>
+        <option value="Perros">Perros</option>
+        <option value="Naturaleza">Naturaleza</option>
+        <option value="Otros">Otros</option>
+      </select>
+
+      <br>
+      <label for="disgusto">Disgusto:</label>
+      <select name="disgusto" required id="disgusto" onchange="updateOptions()">
+        <option value="">Seleccione una opcion</option>
+        <option>Música</option>
+        <option>Fútbol</option>
+        <option>Beisbol</option>
+        <option>Voleibol</option>
+        <option>Películas</option>
+        <option>Tecnologías</option>
+        <option>Viajar</option>
+        <option>Leer</option>
+        <option>Autos</option>
+        <option>Motos</option>
+        <option>Gatos</option>
+        <option>Perros</option>
+        <option>Naturaleza</option>
+        <option>Otros</option>
+      </select>
+      <br>
+      <label for="defuncion">Defunción: </label>
+      <select name="defuncion" required>
+        <option>Sí</option>
+        <option>No</option>
+      </select>
+      <br>
+
+
+      <button type="submit">Crear</button>
+    </form>
+  </div>
+
+
+
+
+  {%endif%}
+
+
+
+
+
+  {%if bandera == 'exito' %}
 
   <h1
-    style="width: 40vw;height: 20vh; display: flex; align-items: center;justify-content: center; background-color: rgba(35, 130, 255, 0.751); color: aliceblue; border-radius: 4px;">
+    style="width: 40vw;height: 20vh; display: flex; align-items: center;justify-content: center; background-color: rgba(14, 118, 255, 0.751); color: aliceblue; border-radius: 4px;">
     Inserción exitosa
   </h1>
 
   {%endif%}
 
-</div>
 
-{%endblock%}
+  {%endblock%}
