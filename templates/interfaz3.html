@@ -2,5 +2,125 @@
 {%block title%} Página de Inicio {%endblock%}
 
 {%block content%}
-<h1>pagina de actualizar</h1>
+
+<div class="container">
+  {% if nodo_actualizado %}
+      <p style="color: green;">¡El nodo se ha actualizado correctamente!</p>
+  {% else %}
+      {% if nodo_id %}
+          <!-- Formulario para actualizar el nodo seleccionado -->
+          <div class="formulario">
+              <h2 style="margin:10px; text-align: center; color: rgba(34, 188, 249, 0.971);font-size: 35px; border-bottom: 3px solid rgb(5, 3, 3);">
+                  Modificar
+              </h2>
+              <form action="/actualizar" method="post"> <!-- Actualizado el atributo action -->
+                <label for="nombre">Nombre: </label>
+                <input type="text" name="nombre">
+                <br>
+                <label for="apellido">Apellido: </label>
+                <input type="text" name="apellido">
+                <br>
+                <label for="edad">Edad: </label>
+                <input type="number" name="edad" id="num">
+                <br>
+                <label for="actividad">Actividad:</label>
+                <select name="actividad" required>
+                  <option>Profesor</option>
+                  <option value="Ingeniero">Ingeniero</option>
+                  <option value="Militar">Militar</option>
+                  <option value="Psicólogo">Psicólogo</option>
+                  <option value="Estudiante">Estudiante</option>
+                  <option value="Abogado">Abogado</option>
+                  <option value="Médico">Médico</option>
+                  <option value="Veterinario">Veterinario</option>
+                  <option value="Otros">Otros</option>
+                </select>
+                <br>
+                <label for="gusto1">Gusto 1:</label>
+                <select name="gusto1" id="gusto1" required onchange="updateOptions()">
+                  <option value="">Seleccione una opcion</option>
+                  <option value="Música">Música</option>
+                  <option value="Fútbol">Fútbol</option>
+                  <option value="Beisbol">Beisbol</option>
+                  <option value="Voleibol">Voleibol</option>
+                  <option value="Películas">Películas</option>
+                  <option value="Tecnologías">Tecnologías</option>
+                  <option value="Viajar">Viajar</option>
+                  <option value="Leer">Leer</option>
+                  <option value="Autos">Autos</option>
+                  <option value="Motos">Motos</option>
+                  <option value="Gatos">Gatos</option>
+                  <option value="Perros">Perros</option>
+                  <option value="Naturaleza">Naturaleza</option>
+                  <option value="Otros">Otros</option>
+                </select>
+                <br>
+                <label for="gusto2">Gusto 2:</label>
+                <select name="gusto2" id="gusto2" required onchange="updateOptions()">
+                  <option value="">Seleccione una opcion</option>
+                  <option value="Música">Música</option>
+                  <option value="Fútbol">Fútbol</option>
+                  <option value="Beisbol">Beisbol</option>
+                  <option value="Voleibol">Voleibol</option>
+                  <option value="Películas">Películas</option>
+                  <option value="Tecnologías">Tecnologías</option>
+                  <option value="Viajar">Viajar</option>
+                  <option value="Leer">Leer</option>
+                  <option value="Autos">Autos</option>
+                  <option value="Motos">Motos</option>
+                  <option value="Gatos">Gatos</option>
+                  <option value="Perros">Perros</option>
+                  <option value="Naturaleza">Naturaleza</option>
+                  <option value="Otros">Otros</option>
+                </select>
+          
+                <br>
+                <label for="disgusto">Disgusto:</label>
+                <select name="disgusto" required id="disgusto" onchange="updateOptions()">
+                  <option value="">Seleccione una opcion</option>
+                  <option>Música</option>
+                  <option>Fútbol</option>
+                  <option>Beisbol</option>
+                  <option>Voleibol</option>
+                  <option>Películas</option>
+                  <option>Tecnologías</option>
+                  <option>Viajar</option>
+                  <option>Leer</option>
+                  <option>Autos</option>
+                  <option>Motos</option>
+                  <option>Gatos</option>
+                  <option>Perros</option>
+                  <option>Naturaleza</option>
+                  <option>Otros</option>
+                </select>
+                <br>
+                <label for="defuncion">Defunción: </label>
+                <select name="defuncion" required>
+                  <option>Sí</option>
+                  <option>No</option>
+                </select>
+                <br>
+          
+                <!-- Se agrega un campo oculto para pasar el ID del nodo -->
+                <input type="hidden" name="nodo_id" value="{{ nodo_id }}">
+          
+                <button type="submit">Actualizar</button>
+          
+              </form>
+          </div>
+      {% else %}
+          <!-- Formulario para seleccionar el nodo a modificar -->
+          <form action="/update" method="post"> <!-- Actualizado el atributo action -->
+              <label for="nodo_id">Seleccione el Nodo a Modificar:</label>
+              <select id="nodo_id" name="nodo_id" required>
+                  {% for id, nodo in nodos %}
+                  <option value="{{ id }}">{{ id }} - {{ nodo['name'] }}</option>
+                  {% endfor %}
+              </select>
+              <button type="submit">Seleccionar Nodo</button>
+          </form>
+      {% endif %}
+  {% endif %}
+</div>
+
 {%endblock%}

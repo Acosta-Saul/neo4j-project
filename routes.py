@@ -27,9 +27,6 @@ def obtener_nodos_relacionados(nombre_nodo_raiz):
 
 
 
-
-
-
 # ruta inicial
 @app.route('/')
 def index():
@@ -132,23 +129,74 @@ def interfaz2():
 
 
 
+def get_nodos():
+    # Función para obtener todos los nodos de la base de datos con sus IDs
+    query = "MATCH (n) RETURN id(n) AS id, n"
+    result = session.run(query)
+    nodos = [(record["id"], record["n"]) for record in result]
+    return nodos
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-@app.route('/update')
+# Página para actualizar nodos
+@app.route('/update', methods=['GET', 'POST'])
 def interfaz3():
-  return render_template('interfaz3.html')
+    if request.method == 'POST':
+        nodo_id = request.form.get('nodo_id')
+        
+        if nodo_id:
+            # Si se seleccionó un nodo, redirigir al formulario para llenar los datos
+            return render_template('interfaz3.html', nodo_id=nodo_id)
+        else:
+            # Si no se seleccionó un nodo, redirigir a la misma página
+            return render_template('interfaz3.html', nodos=get_nodos(), nodo_seleccionado=False, nodo_actualizado=False)
+    else:
+        # Si es una solicitud GET, mostrar la lista de nodos para seleccionar uno
+        return render_template('interfaz3.html', nodos=get_nodos(), nodo_seleccionado=None, nodo_actualizado=False)
+
+@app.route('/actualizar', methods=['POST'])
+def actualizar_nodo():
+    nodo_id = request.form.get('nodo_id')
+    update_node = {
+        'nombre': request.form['nombre'],
+        'apellido': request.form['apellido'],
+        'edad': request.form['edad'],
+        'actividad': request.form['actividad'],
+        'gustos': [request.form['gusto1'], request.form['gusto2']],
+        'disgusto': request.form['disgusto'],
+        'defuncion': request.form['defuncion']
+    }
+    
+    # Realizar la consulta para actualizar el nodo
+    query_actualizar = """
+    MATCH (n) WHERE id(n) = $nodo_id
+    SET n.name = $name,
+    n.apellido = $apellido,
+    n.edad = $edad,
+    n.actividad = $actividad,
+    n.gustos= $gustos,
+    n.disgusto = $disgusto,
+    n.defuncion = $defuncion
+    """
+
+    print("Nodo ID:", nodo_id)
+
+    print("Datos de actualización:", update_node)
+
+    with driver.session() as session:
+        session.run(query_actualizar, nodo_id=nodo_id, name=update_node['nombre'], apellido=update_node['apellido'], edad=update_node['edad'], actividad=update_node['actividad'],
+            gustos=update_node['gustos'], disgusto=update_node['disgusto'], defuncion=update_node['defuncion'])
+
+
+    return render_template('interfaz3.html', nodo_seleccionado=True, nodo_actualizado=True)
+
+
+
+
+
+
+
+
+
+
 
 
 #@app.route('/delete')
