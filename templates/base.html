@@ -11,7 +11,7 @@
 <body>
 
   <div class="block">
-    <img id="logo_neo4j" src="https://dist.neo4j.com/wp-content/uploads/20210423201726/Aura-logo_color.png">
+    <img id="logo_neo4j" src="{{url_for('static', filename='img/Aura-logo_color.png')}}">
 
     <nav>
       <ul>
@@ -29,8 +29,9 @@
   <!-- aqui el contenido dinamico de cada html -->
   {%endblock%}
 
-  <script src="{{url_for('static', filename='js/script.js')}}"></script>
 
+
+  <script src="{{url_for('static', filename='js/script.js')}}"></script>
 
 </body>
 

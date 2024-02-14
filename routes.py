@@ -69,8 +69,51 @@ def index():
 
 
 # Página que hace la consultas
-@app.route('/read')
+@app.route('/read', methods=['GET','POST'])
 def interfaz1():
+
+  
+  # Si la opcion es ver todos los nodos que sean estudiantes
+  if request.method == 'POST' and request.form['query'] == '1':
+    query = (
+        "MATCH (n) WHERE n.actividad = 'Estudiante' RETURN n"
+    )
+    nodos=session.run(query)
+    bandera = '1'
+    return render_template('interfaz1.html', nodos = nodos, bandera = bandera)
+  
+  # Si la opcion es ver los primos de los amigos del AlumnoA
+  elif request.method == 'POST' and request.form['query'] == '2':
+    nodo_raiz = request.form['nodo_raiz']
+    
+    if nodo_raiz == 'Víctor':
+      # consultas
+      query = ("MATCH (n:Family_A)-[:PRIMO_DE]->() RETURN n")
+      query2 = ("MATCH (n:Family_B)-[:PRIMO_DE]->() RETURN n")
+      nodo_ref = 'Luis'
+      nodo_ref2 = 'Saúl'
+      primos_X = session.run(query)
+      primos_Y = session.run(query2)
+    
+    elif nodo_raiz == 'Luis':
+      query = ("MATCH (n:Family_A)-[:PRIMO_DE]->() RETURN n")
+      query2 = ("MATCH (n:Family_C)-[:PRIMO_DE]->() RETURN n")
+      nodo_ref2 = 'Saúl'
+      nodo_ref = 'Víctor'
+      primos_X = session.run(query)
+      primos_Y = session.run(query2)
+      
+    else:
+      query = ("MATCH (n:Family_B)-[:PRIMO_DE]->() RETURN n")
+      query2 = ("MATCH (n:Family_C)-[:PRIMO_DE]->() RETURN n")
+      nodo_ref2 = 'Luis'
+      nodo_ref = 'Víctor'
+      primos_X = session.run(query)
+      primos_Y = session.run(query2)
+    
+    bandera = '2'
+    return render_template('interfaz1.html', bandera = bandera, primos_X = primos_X, primos_Y = primos_Y, nodo_ref = nodo_ref, nodo_ref2 = nodo_ref2, nodo_raiz = nodo_raiz)
+  
   return render_template('interfaz1.html')
 
 
@@ -134,7 +177,7 @@ def interfaz2():
       bandera = '3'
       return render_template('interfaz2.html', bandera = bandera,relacion = relacion, nodo_raiz = nodo_raiz)
     
-    elif(relacion == 'PADRE_DE' or relacion == 'CASADO_CON' or relacion == 'PARIENTE_DE'):
+    elif(relacion == 'PADRE_DE' or relacion == 'CASADO_CON' or relacion == 'PARIENTE_DE' or relacion == 'TIO_DE' or relacion == 'PRIMO_DE'):
       bandera = '4'
       nodos_relacionados = obtener_nodos_relacionados(nodo_raiz)
 
@@ -209,7 +252,7 @@ def interfaz2():
   
   
 #Fase 4 para el caso de relacion PADRE_DE, CASADO_CON, PARIENTE_DE  
-  if (request.method == 'POST' and request.form['bandera'] == '5') and (request.form['relacion'] == 'PADRE_DE' or request.form['relacion'] == 'PARIENTE_DE' or request.form['relacion'] == 'CASADO_CON'):
+  if (request.method == 'POST' and request.form['bandera'] == '5') and (request.form['relacion'] == 'PADRE_DE' or request.form['relacion'] == 'PARIENTE_DE' or request.form['relacion'] == 'CASADO_CON' or request.form['relacion'] == 'TIO_DE' or request.form['relacion'] == 'PRIMO_DE'):
     
     nodo_raiz = request.form['nodo_raiz']
     nodo_asignado = request.form['nodo_asignado']
@@ -275,7 +318,6 @@ def interfaz2():
         defuncion: $defuncion
       })
       """
-   
     #ejecuta la query
     result = session.run(query, name=new_node['nombre'], apellido=new_node  ['apellido'], edad=new_node['edad'], actividad=new_node['actividad'],   gustos=new_node['gustos'], disgusto=new_node['disgusto'], defuncion=new_node  ['defuncion'])
     

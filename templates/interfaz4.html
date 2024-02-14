@@ -6,7 +6,8 @@
 <div class="container">
     {% if bandera == '0' %}
     <div class="formulario">
-        <h2 style="margin:10px; text-align: center; color: rgba(34, 188, 249, 0.971);font-size: 35px; border-bottom: 3px solid rgb(5, 3, 3);">
+        <h2
+            style="margin:10px; text-align: center; color: rgba(34, 188, 249, 0.971);font-size: 35px; border-bottom: 3px solid rgb(5, 3, 3);">
             Borrar Nodo</h2>
         <form action="" method="post">
 
@@ -26,7 +27,8 @@
     {% endif %}
     {% if bandera == '1' %}
     <div class="formulario">
-        <h2 style="margin:10px; text-align: center; color: rgba(34, 188, 249, 0.971);font-size: 35px; border-bottom: 3px solid rgb(5, 3, 3);">
+        <h2
+            style="margin:10px; text-align: center; color: rgba(34, 188, 249, 0.971);font-size: 35px; border-bottom: 3px solid rgb(5, 3, 3);">
             Borrar Nodo</h2>
         <form action="" method="post">
             <h4>Seleccione el nodo a borrar</h4>
@@ -37,25 +39,32 @@
                 {% endfor %}
             </select>
             <input type="text" name="bandera" value="2" hidden>
-            
+
             <!-- Verifica si nodos_a_borrar tiene al menos un elemento antes de acceder a sus propiedades -->
             {% if nodos_a_borrar and nodos_a_borrar[0] %}
-                <!-- Agrega un campo oculto para enviar el nombre del nodo seleccionado -->
-                <input type="hidden" name="nodo_seleccionado" value="{{ nodos_a_borrar[0]['name'] }}">
+            <!-- Agrega un campo oculto para enviar el nombre del nodo seleccionado -->
+            <input type="hidden" name="nodo_seleccionado" value="{{ nodos_a_borrar[0]['name'] }}">
             {% endif %}
-            
+
             <br>
             <button type="submit">Borrar Nodo</button>
         </form>
     </div>
-{% endif %}
+    {% endif %}
 
 
 
     {% if bandera == '2' %}
-    <h1 style="width: 40vw;height: 20vh; display: flex; align-items: center;justify-content: center; background-color: rgba(35, 130, 255, 0.751); color: aliceblue; border-radius: 4px;">
+    <h1
+        style="width: 40vw;height: 20vh; display: flex; align-items: center;justify-content: center; background-color: rgba(35, 130, 255, 0.751); color: aliceblue; border-radius: 4px;">
         Borrado exitoso
     </h1>
     {% endif %}
 </div>
+
+
+<div class="pokemon">
+    <img src="{{url_for('static', filename='img/bulbasaur.gif')}}" width="10%" height="10%" alt="">
+</div>
+
 {% endblock %}

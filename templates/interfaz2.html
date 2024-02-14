@@ -50,6 +50,8 @@
         <option value="PADRE_DE">Padre de</option>
         <option value="CASADO_CON">Casado con</option>
         <option value="PARIENTE_DE">Pariente de</option>
+        <option value="PRIMO_DE">Primo de</option>
+        <option value="TIO_DE">Tio de</option>
       </select>
       <input type="text" name="bandera" value="2" hidden>
       <input type="text" name="nodo_raiz" value="{{nodo_raiz}}" hidden>
@@ -315,8 +317,6 @@
 
 
 
-
-
   {%if bandera == 'exito' %}
 
   <h1
@@ -327,4 +327,7 @@
   {%endif%}
 
 
-  {%endblock%}
+
+</div>
+
+{%endblock%}

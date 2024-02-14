@@ -85,7 +85,7 @@ input {
 
 div.container {
   width: 100vw;
-  height: 80vh;
+  height: 60vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -126,4 +126,52 @@ button {
 
 button:hover {
   background-color: blue;
+}
+
+.lot {
+  width: 100vw;
+  height: 30vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.sublot {
+  border-radius: 20px 0 20px 0;
+  padding: 20px;
+  width: 65vw;
+  height: 190px;
+  background-color: rgb(255, 255, 255);
+}
+
+select {
+  font-size: 15px;
+}
+
+
+table {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 5px 10px;
+}
+
+
+tr,
+th,
+td {
+  border: 2px solid rgb(24, 157, 246);
+}
+
+.pokemon {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 14px;
 }
