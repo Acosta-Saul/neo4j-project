@@ -15,30 +15,29 @@ session = driver.session()
 app = Flask(__name__)
 
 
+
 #ejecuta consultas de Neo4j
 def ejecutar_consulta(cypher_query):
     with driver.session() as session:
         result = session.run(cypher_query)
         return result.data()
-    
+
 def obtener_nodos_relacionados(nombre_nodo_raiz):
-    if nombre_nodo_raiz == 'Saúl':
-        cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_A) RETURN x as nodo "\
-                       f"UNION "\
-                       f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(a:Amigo) RETURN a as nodo"
-    elif nombre_nodo_raiz == 'Luis':
-        cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_B) RETURN x as nodo "\
-                       f"UNION "\
-                       f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(a:Amigo) RETURN a as nodo"
+  
+    # Esto fue modificado 
+    if(nombre_nodo_raiz == 'Saúl'):
+      cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_A) RETURN x"
+      resultados = ejecutar_consulta(cypher_query)
+      return [registro['x'] for registro in resultados]
+    elif(nombre_nodo_raiz == 'Luis'):   
+      cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_B) RETURN x"
+      resultados = ejecutar_consulta(cypher_query)
+      return [registro['x'] for registro in resultados]
     else:
-        cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_C) RETURN x as nodo "\
-                       f"UNION "\
-                       f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(a:Amigo) RETURN a as nodo"
-
-    resultados = ejecutar_consulta(cypher_query)
-    return [registro['nodo'] for registro in resultados]
-
-
+      cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_C) RETURN x"
+      resultados = ejecutar_consulta(cypher_query)
+      return [registro['x'] for registro in resultados]
+  
 
 
 
@@ -117,7 +116,34 @@ def interfaz1():
     bandera = '2'
     return render_template('interfaz1.html', bandera = bandera, primos_X = primos_X, primos_Y = primos_Y, nodo_ref = nodo_ref, nodo_ref2 = nodo_ref2, nodo_raiz = nodo_raiz)
   
+  
+  #Si la opcion es tios masculinos de un amigo que le disguten los gatos y sean veterinarios
+  elif request.method == 'POST' and request.form['query'] == '6':
+    nodo_raiz = request.form['nodo_raiz']
+    
+    if nodo_raiz == 'Víctor':
+      query = (
+      "MATCH (n:Family_C) WHERE n.actividad = 'Veterinario' AND n.disgusto = 'Gatos' RETURN n"
+      )
+    elif nodo_raiz == 'Luis':
+      query = (
+      "MATCH (n:Family_B) WHERE n.actividad = 'Veterinario' AND n.disgusto = 'Gatos' RETURN n"
+      )
+    else:
+      query = (
+      "MATCH (n:Family_A) WHERE n.actividad = 'Veterinario' AND n.disgusto = 'Gatos' RETURN n"
+      )
+    
+    nodos = session.run(query)
+    
+    bandera = '5'
+    return render_template('interfaz1.html', nodos = nodos, bandera = bandera, nodo_raiz = nodo_raiz)
+  
   return render_template('interfaz1.html')
+
+
+
+
 
 
 
@@ -148,11 +174,6 @@ def interfaz1():
 def interfaz2():
   
   
-  
-  
-  
-  
-  
   bandera = '0'
 # Fase 1 escoger el árbol
   if request.method == 'POST' and request.form['bandera'] == '1':
@@ -162,12 +183,6 @@ def interfaz2():
     nodos_relacionados = obtener_nodos_relacionados(arbol_seleccionado)
 
     return render_template('interfaz2.html', nodos=nodos_relacionados, bandera = bandera, nodo_raiz = arbol_seleccionado)
-
-
-
-
-
-
 
 # Fase 2 escoger el nodo al cual va estar relacionado y su tipo de relación
   if request.method == 'POST' and request.form['bandera'] == '2':
@@ -180,7 +195,7 @@ def interfaz2():
       bandera = '3'
       return render_template('interfaz2.html', bandera = bandera,relacion = relacion, nodo_raiz = nodo_raiz)
     
-    elif(relacion == 'PADRE_DE' or relacion == 'CASADO_CON' or relacion == 'PARIENTE_DE'):
+    elif(relacion == 'PADRE_DE' or relacion == 'CASADO_CON' or relacion == 'PARIENTE_DE' or relacion == 'TIO_DE' or relacion == 'PRIMO_DE'):
       bandera = '4'
       nodos_relacionados = obtener_nodos_relacionados(nodo_raiz)
 
@@ -255,7 +270,7 @@ def interfaz2():
   
   
 #Fase 4 para el caso de relacion PADRE_DE, CASADO_CON, PARIENTE_DE  
-  if (request.method == 'POST' and request.form['bandera'] == '5') and (request.form['relacion'] == 'PADRE_DE' or request.form['relacion'] == 'PARIENTE_DE' or request.form['relacion'] == 'CASADO_CON'):
+  if (request.method == 'POST' and request.form['bandera'] == '5') and (request.form['relacion'] == 'PADRE_DE' or request.form['relacion'] == 'PARIENTE_DE' or request.form['relacion'] == 'CASADO_CON' or request.form['relacion'] == 'TIO_DE' or request.form['relacion'] == 'PRIMO_DE'):
     
     nodo_raiz = request.form['nodo_raiz']
     nodo_asignado = request.form['nodo_asignado']
@@ -278,6 +293,7 @@ def interfaz2():
       'defuncion': request.form['defuncion'],
       'nodo_asignado': request.form['nodo_asignado'], 
       'relacion':request.form['relacion'],
+      'genero':request.form['genero']
     }
     
     if nodo_raiz == 'Saúl':
@@ -290,7 +306,8 @@ def interfaz2():
         actividad: $actividad,
         gustos: $gustos,
         disgusto: $disgusto,
-        defuncion: $defuncion
+        defuncion: $defuncion,
+        genero: $genero
       })
       """
      
@@ -304,7 +321,8 @@ def interfaz2():
         actividad: $actividad,
         gustos: $gustos,
         disgusto: $disgusto,
-        defuncion: $defuncion
+        defuncion: $defuncion,
+        genero: $genero
       })
       """
       
@@ -318,31 +336,31 @@ def interfaz2():
         actividad: $actividad,
         gustos: $gustos,
         disgusto: $disgusto,
-        defuncion: $defuncion
+        defuncion: $defuncion,
+        genero: $genero
       })
       """
-   
     #ejecuta la query
-    result = session.run(query, name=new_node['nombre'], apellido=new_node  ['apellido'], edad=new_node['edad'], actividad=new_node['actividad'],   gustos=new_node['gustos'], disgusto=new_node['disgusto'], defuncion=new_node  ['defuncion'])
+    result = session.run(query, name=new_node['nombre'], apellido=new_node  ['apellido'], edad=new_node['edad'], actividad=new_node['actividad'],   gustos=new_node['gustos'], disgusto=new_node['disgusto'], defuncion=new_node  ['defuncion'],  genero=new_node['genero'])
     
       # Obtiene el id del nodo creado para relacionar
     if nodo_raiz == 'Saúl':
       query_obtener_id = """
-      MATCH (f:Family_A {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion})
+      MATCH (f:Family_A {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion, genero: $genero})
       RETURN id(f) AS id_nodo
       """
     elif nodo_raiz == 'Luis':
       query_obtener_id = """
-      MATCH (f:Family_B {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion})
+      MATCH (f:Family_B {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion, genero: $genero})
       RETURN id(f) AS id_nodo
       """
     else:
       query_obtener_id = """
-      MATCH (f:Family_C {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion})
+      MATCH (f:Family_C {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion, genero: $genero})
       RETURN id(f) AS id_nodo
       """
     #ejecuta la query  
-    result_id = session.run(query_obtener_id, nombre=new_node['nombre'],  apellido=new_node['apellido'], edad=new_node['edad'], actividad=new_node ['actividad'], gustos=new_node['gustos'], disgusto=new_node['disgusto'],   defuncion=new_node['defuncion'])
+    result_id = session.run(query_obtener_id, nombre=new_node['nombre'],  apellido=new_node['apellido'], edad=new_node['edad'], actividad=new_node ['actividad'], gustos=new_node['gustos'], disgusto=new_node['disgusto'],   defuncion=new_node['defuncion'], genero=new_node['genero'])
 
       # Extraer el ID del nodo del resultado
     id_nodo_insertado = result_id.single()['id_nodo']
@@ -388,7 +406,6 @@ def interfaz2():
   #Retorna al inicio      
   return render_template('interfaz2.html', bandera = bandera)
 
-  
 
 
 
