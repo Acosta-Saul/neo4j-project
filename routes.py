@@ -275,6 +275,7 @@ def interfaz2():
       'defuncion': request.form['defuncion'],
       'nodo_asignado': request.form['nodo_asignado'], 
       'relacion':request.form['relacion'],
+      'genero':request.form['genero']
     }
     
     if nodo_raiz == 'Saúl':
@@ -287,7 +288,8 @@ def interfaz2():
         actividad: $actividad,
         gustos: $gustos,
         disgusto: $disgusto,
-        defuncion: $defuncion
+        defuncion: $defuncion,
+        genero: $genero
       })
       """
      
@@ -301,7 +303,8 @@ def interfaz2():
         actividad: $actividad,
         gustos: $gustos,
         disgusto: $disgusto,
-        defuncion: $defuncion
+        defuncion: $defuncion,
+        genero: $genero
       })
       """
       
@@ -315,30 +318,31 @@ def interfaz2():
         actividad: $actividad,
         gustos: $gustos,
         disgusto: $disgusto,
-        defuncion: $defuncion
+        defuncion: $defuncion,
+        genero: $genero
       })
       """
     #ejecuta la query
-    result = session.run(query, name=new_node['nombre'], apellido=new_node  ['apellido'], edad=new_node['edad'], actividad=new_node['actividad'],   gustos=new_node['gustos'], disgusto=new_node['disgusto'], defuncion=new_node  ['defuncion'])
+    result = session.run(query, name=new_node['nombre'], apellido=new_node  ['apellido'], edad=new_node['edad'], actividad=new_node['actividad'],   gustos=new_node['gustos'], disgusto=new_node['disgusto'], defuncion=new_node  ['defuncion'],  genero=new_node['genero'])
     
       # Obtiene el id del nodo creado para relacionar
     if nodo_raiz == 'Saúl':
       query_obtener_id = """
-      MATCH (f:Family_A {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion})
+      MATCH (f:Family_A {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion, genero: $genero})
       RETURN id(f) AS id_nodo
       """
     elif nodo_raiz == 'Luis':
       query_obtener_id = """
-      MATCH (f:Family_B {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion})
+      MATCH (f:Family_B {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion, genero: $genero})
       RETURN id(f) AS id_nodo
       """
     else:
       query_obtener_id = """
-      MATCH (f:Family_C {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion})
+      MATCH (f:Family_C {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion, genero: $genero})
       RETURN id(f) AS id_nodo
       """
     #ejecuta la query  
-    result_id = session.run(query_obtener_id, nombre=new_node['nombre'],  apellido=new_node['apellido'], edad=new_node['edad'], actividad=new_node ['actividad'], gustos=new_node['gustos'], disgusto=new_node['disgusto'],   defuncion=new_node['defuncion'])
+    result_id = session.run(query_obtener_id, nombre=new_node['nombre'],  apellido=new_node['apellido'], edad=new_node['edad'], actividad=new_node ['actividad'], gustos=new_node['gustos'], disgusto=new_node['disgusto'],   defuncion=new_node['defuncion'], genero=new_node['genero'])
 
       # Extraer el ID del nodo del resultado
     id_nodo_insertado = result_id.single()['id_nodo']
