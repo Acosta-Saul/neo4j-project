@@ -19,23 +19,25 @@ def ejecutar_consulta(cypher_query):
     with driver.session() as session:
         result = session.run(cypher_query)
         return result.data()
-
+    
 def obtener_nodos_relacionados(nombre_nodo_raiz):
-  
-    # Esto fue modificado 
-    if(nombre_nodo_raiz == 'Saúl'):
-      cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_A) RETURN x"
-      resultados = ejecutar_consulta(cypher_query)
-      return [registro['x'] for registro in resultados]
-    elif(nombre_nodo_raiz == 'Luis'):   
-      cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_B) RETURN x"
-      resultados = ejecutar_consulta(cypher_query)
-      return [registro['x'] for registro in resultados]
+    if nombre_nodo_raiz == 'Saúl':
+        cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_A) RETURN x as nodo "\
+                       f"UNION "\
+                       f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(a:Amigo) RETURN a as nodo"
+    elif nombre_nodo_raiz == 'Luis':
+        cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_B) RETURN x as nodo "\
+                       f"UNION "\
+                       f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(a:Amigo) RETURN a as nodo"
     else:
-      cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_C) RETURN x"
-      resultados = ejecutar_consulta(cypher_query)
-      return [registro['x'] for registro in resultados]
-  
+        cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_C) RETURN x as nodo "\
+                       f"UNION "\
+                       f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(a:Amigo) RETURN a as nodo"
+
+    resultados = ejecutar_consulta(cypher_query)
+    return [registro['nodo'] for registro in resultados]
+
+
 
 
 
@@ -432,8 +434,8 @@ def borrar_nodo_y_relaciones_por_nombre(name):
         # Imprimir el nombre del nodo antes de borrarlo
         print("Borrando nodo:", name)
 
-        # Construir la consulta Cypher para eliminar las relaciones del nodo
-        cypher_query_relaciones = f"MATCH (n:Family_A{{name:'{name}'}})-[r]-() DELETE r"
+        # Construir la consulta Cypher para eliminar todas las relaciones del nodo
+        cypher_query_relaciones = f"MATCH (n{{name:'{name}'}})-[r]-() DELETE r"
 
         # Imprimir la consulta antes de ejecutarla
         print("Consulta Neo4j para eliminar relaciones:", cypher_query_relaciones)
@@ -442,13 +444,13 @@ def borrar_nodo_y_relaciones_por_nombre(name):
         with driver.session() as session:
             session.run(cypher_query_relaciones)
 
-        # Construir la consulta Cypher para borrar el nodo
-        cypher_query_borrar = f"MATCH (n:Family_A{{name:'{name}'}}) DELETE n"
+        # Construir la consulta Cypher para borrar el nodo junto con cualquier relación restante
+        cypher_query_borrar = f"MATCH (n{{name:'{name}'}}) DETACH DELETE n"
 
         # Imprimir la consulta antes de ejecutarla
-        print("Consulta Neo4j para borrar nodo:", cypher_query_borrar)
+        print("Consulta Neo4j para borrar nodo y relaciones:", cypher_query_borrar)
 
-        # Ejecutar la consulta para borrar el nodo utilizando la sesión directamente
+        # Ejecutar la consulta para borrar el nodo junto con cualquier relación restante
         with driver.session() as session:
             session.run(cypher_query_borrar)
 
@@ -456,6 +458,7 @@ def borrar_nodo_y_relaciones_por_nombre(name):
     except Exception as e:
         # Imprimir cualquier error que ocurra durante la ejecución
         print("Error en la ejecución de la consulta:", str(e))
+
 
 
 @app.route('/delete', methods=['GET', 'POST'])
@@ -484,5 +487,3 @@ def interfaz4():
                 return render_template('interfaz4.html', bandera='2')
 
     return render_template('interfaz4.html', bandera=bandera)
-
-
