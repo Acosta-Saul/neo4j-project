@@ -1,3 +1,4 @@
+
 from neo4j import GraphDatabase
 from flask import Flask ,render_template, url_for, request
 
@@ -19,23 +20,25 @@ def ejecutar_consulta(cypher_query):
     with driver.session() as session:
         result = session.run(cypher_query)
         return result.data()
-
+    
 def obtener_nodos_relacionados(nombre_nodo_raiz):
-  
-    # Esto fue modificado 
-    if(nombre_nodo_raiz == 'Saúl'):
-      cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_A) RETURN x"
-      resultados = ejecutar_consulta(cypher_query)
-      return [registro['x'] for registro in resultados]
-    elif(nombre_nodo_raiz == 'Luis'):   
-      cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_B) RETURN x"
-      resultados = ejecutar_consulta(cypher_query)
-      return [registro['x'] for registro in resultados]
+    if nombre_nodo_raiz == 'Saúl':
+        cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_A) RETURN x as nodo "\
+                       f"UNION "\
+                       f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(a:Amigo) RETURN a as nodo"
+    elif nombre_nodo_raiz == 'Luis':
+        cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_B) RETURN x as nodo "\
+                       f"UNION "\
+                       f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(a:Amigo) RETURN a as nodo"
     else:
-      cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_C) RETURN x"
-      resultados = ejecutar_consulta(cypher_query)
-      return [registro['x'] for registro in resultados]
-  
+        cypher_query = f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(x:Family_C) RETURN x as nodo "\
+                       f"UNION "\
+                       f"MATCH (u:User {{name: '{nombre_nodo_raiz}'}})-[]-(a:Amigo) RETURN a as nodo"
+
+    resultados = ejecutar_consulta(cypher_query)
+    return [registro['nodo'] for registro in resultados]
+
+
 
 
 
@@ -177,7 +180,7 @@ def interfaz2():
       bandera = '3'
       return render_template('interfaz2.html', bandera = bandera,relacion = relacion, nodo_raiz = nodo_raiz)
     
-    elif(relacion == 'PADRE_DE' or relacion == 'CASADO_CON' or relacion == 'PARIENTE_DE' or relacion == 'TIO_DE' or relacion == 'PRIMO_DE'):
+    elif(relacion == 'PADRE_DE' or relacion == 'CASADO_CON' or relacion == 'PARIENTE_DE'):
       bandera = '4'
       nodos_relacionados = obtener_nodos_relacionados(nodo_raiz)
 
@@ -252,7 +255,7 @@ def interfaz2():
   
   
 #Fase 4 para el caso de relacion PADRE_DE, CASADO_CON, PARIENTE_DE  
-  if (request.method == 'POST' and request.form['bandera'] == '5') and (request.form['relacion'] == 'PADRE_DE' or request.form['relacion'] == 'PARIENTE_DE' or request.form['relacion'] == 'CASADO_CON' or request.form['relacion'] == 'TIO_DE' or request.form['relacion'] == 'PRIMO_DE'):
+  if (request.method == 'POST' and request.form['bandera'] == '5') and (request.form['relacion'] == 'PADRE_DE' or request.form['relacion'] == 'PARIENTE_DE' or request.form['relacion'] == 'CASADO_CON'):
     
     nodo_raiz = request.form['nodo_raiz']
     nodo_asignado = request.form['nodo_asignado']
@@ -275,7 +278,6 @@ def interfaz2():
       'defuncion': request.form['defuncion'],
       'nodo_asignado': request.form['nodo_asignado'], 
       'relacion':request.form['relacion'],
-      'genero':request.form['genero']
     }
     
     if nodo_raiz == 'Saúl':
@@ -288,8 +290,7 @@ def interfaz2():
         actividad: $actividad,
         gustos: $gustos,
         disgusto: $disgusto,
-        defuncion: $defuncion,
-        genero: $genero
+        defuncion: $defuncion
       })
       """
      
@@ -303,8 +304,7 @@ def interfaz2():
         actividad: $actividad,
         gustos: $gustos,
         disgusto: $disgusto,
-        defuncion: $defuncion,
-        genero: $genero
+        defuncion: $defuncion
       })
       """
       
@@ -318,31 +318,31 @@ def interfaz2():
         actividad: $actividad,
         gustos: $gustos,
         disgusto: $disgusto,
-        defuncion: $defuncion,
-        genero: $genero
+        defuncion: $defuncion
       })
       """
+   
     #ejecuta la query
-    result = session.run(query, name=new_node['nombre'], apellido=new_node  ['apellido'], edad=new_node['edad'], actividad=new_node['actividad'],   gustos=new_node['gustos'], disgusto=new_node['disgusto'], defuncion=new_node  ['defuncion'],  genero=new_node['genero'])
+    result = session.run(query, name=new_node['nombre'], apellido=new_node  ['apellido'], edad=new_node['edad'], actividad=new_node['actividad'],   gustos=new_node['gustos'], disgusto=new_node['disgusto'], defuncion=new_node  ['defuncion'])
     
       # Obtiene el id del nodo creado para relacionar
     if nodo_raiz == 'Saúl':
       query_obtener_id = """
-      MATCH (f:Family_A {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion, genero: $genero})
+      MATCH (f:Family_A {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion})
       RETURN id(f) AS id_nodo
       """
     elif nodo_raiz == 'Luis':
       query_obtener_id = """
-      MATCH (f:Family_B {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion, genero: $genero})
+      MATCH (f:Family_B {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion})
       RETURN id(f) AS id_nodo
       """
     else:
       query_obtener_id = """
-      MATCH (f:Family_C {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion, genero: $genero})
+      MATCH (f:Family_C {name: $nombre, apellido: $apellido, edad: $edad, actividad:      $actividad, gustos: $gustos, disgusto: $disgusto, defuncion: $defuncion})
       RETURN id(f) AS id_nodo
       """
     #ejecuta la query  
-    result_id = session.run(query_obtener_id, nombre=new_node['nombre'],  apellido=new_node['apellido'], edad=new_node['edad'], actividad=new_node ['actividad'], gustos=new_node['gustos'], disgusto=new_node['disgusto'],   defuncion=new_node['defuncion'], genero=new_node['genero'])
+    result_id = session.run(query_obtener_id, nombre=new_node['nombre'],  apellido=new_node['apellido'], edad=new_node['edad'], actividad=new_node ['actividad'], gustos=new_node['gustos'], disgusto=new_node['disgusto'],   defuncion=new_node['defuncion'])
 
       # Extraer el ID del nodo del resultado
     id_nodo_insertado = result_id.single()['id_nodo']
@@ -403,8 +403,6 @@ def interfaz2():
 
 
 
-
-
 def get_nodos():
     # Función para obtener todos los nodos de la base de datos con sus IDs
     query = "MATCH (n) RETURN id(n) AS id, n"
@@ -419,7 +417,6 @@ def Actulizar_nodo(nodo_id, update_node):
         SET n.name = '{update_node['nombre']}',
             n.apellido = '{update_node['apellido']}',
             n.edad = {update_node['edad']},
-            n.genero = '{update_node['genero']}',
             n.actividad = '{update_node['actividad']}',
             n.gustos = {update_node['gustos']},
             n.disgusto = '{update_node['disgusto']}',
@@ -434,6 +431,7 @@ def Actulizar_nodo(nodo_id, update_node):
     except Exception as e:
         # Imprimir cualquier error que ocurra durante la ejecución
         print("Error en la ejecución de la consulta:", str(e))
+
 
 # Página para actualizar nodos
 @app.route('/update', methods=['GET', 'POST'])
@@ -454,7 +452,6 @@ def interfaz3():
                     'nombre': request.form['nombre'],
                     'apellido': request.form['apellido'],
                     'edad': request.form['edad'],
-                    'genero': request.form['genero'],
                     'actividad': request.form['actividad'],
                     'gustos': [request.form['gusto1'], request.form['gusto2']],
                     'disgusto': request.form['disgusto'],
@@ -469,13 +466,20 @@ def interfaz3():
 
 
 
+
+
+
+
+
+
+
 def borrar_nodo_y_relaciones_por_nombre(name):
     try:
         # Imprimir el nombre del nodo antes de borrarlo
         print("Borrando nodo:", name)
 
-        # Construir la consulta Cypher para eliminar las relaciones del nodo
-        cypher_query_relaciones = f"MATCH (n:Family_A{{name:'{name}'}})-[r]-() DELETE r"
+        # Construir la consulta Cypher para eliminar todas las relaciones del nodo
+        cypher_query_relaciones = f"MATCH (n{{name:'{name}'}})-[r]-() DELETE r"
 
         # Imprimir la consulta antes de ejecutarla
         print("Consulta Neo4j para eliminar relaciones:", cypher_query_relaciones)
@@ -484,13 +488,13 @@ def borrar_nodo_y_relaciones_por_nombre(name):
         with driver.session() as session:
             session.run(cypher_query_relaciones)
 
-        # Construir la consulta Cypher para borrar el nodo
-        cypher_query_borrar = f"MATCH (n:Family_A{{name:'{name}'}}) DELETE n"
+        # Construir la consulta Cypher para borrar el nodo junto con cualquier relación restante
+        cypher_query_borrar = f"MATCH (n{{name:'{name}'}}) DETACH DELETE n"
 
         # Imprimir la consulta antes de ejecutarla
-        print("Consulta Neo4j para borrar nodo:", cypher_query_borrar)
+        print("Consulta Neo4j para borrar nodo y relaciones:", cypher_query_borrar)
 
-        # Ejecutar la consulta para borrar el nodo utilizando la sesión directamente
+        # Ejecutar la consulta para borrar el nodo junto con cualquier relación restante
         with driver.session() as session:
             session.run(cypher_query_borrar)
 
@@ -498,6 +502,7 @@ def borrar_nodo_y_relaciones_por_nombre(name):
     except Exception as e:
         # Imprimir cualquier error que ocurra durante la ejecución
         print("Error en la ejecución de la consulta:", str(e))
+
 
 
 @app.route('/delete', methods=['GET', 'POST'])
@@ -526,5 +531,3 @@ def interfaz4():
                 return render_template('interfaz4.html', bandera='2')
 
     return render_template('interfaz4.html', bandera=bandera)
-
-
