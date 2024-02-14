@@ -417,6 +417,7 @@ def Actulizar_nodo(nodo_id, update_node):
         SET n.name = '{update_node['nombre']}',
             n.apellido = '{update_node['apellido']}',
             n.edad = {update_node['edad']},
+            n.genero = '{update_node['genero']}',
             n.actividad = '{update_node['actividad']}',
             n.gustos = {update_node['gustos']},
             n.disgusto = '{update_node['disgusto']}',
@@ -452,6 +453,7 @@ def interfaz3():
                     'nombre': request.form['nombre'],
                     'apellido': request.form['apellido'],
                     'edad': request.form['edad'],
+                    'genero': request.form['genero'],
                     'actividad': request.form['actividad'],
                     'gustos': [request.form['gusto1'], request.form['gusto2']],
                     'disgusto': request.form['disgusto'],
@@ -461,13 +463,6 @@ def interfaz3():
             return render_template('interfaz3.html', bandera='2', nodos=nodos)
         
     return render_template('interfaz3.html', bandera=bandera, nodos=nodos)
-
-
-
-
-
-
-
 
 
 
