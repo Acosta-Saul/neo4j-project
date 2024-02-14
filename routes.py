@@ -114,6 +114,29 @@ def interfaz1():
     bandera = '2'
     return render_template('interfaz1.html', bandera = bandera, primos_X = primos_X, primos_Y = primos_Y, nodo_ref = nodo_ref, nodo_ref2 = nodo_ref2, nodo_raiz = nodo_raiz)
   
+  
+  #Si la opcion es tios masculinos de un amigo que le disguten los gatos y sean veterinarios
+  elif request.method == 'POST' and request.form['query'] == '6':
+    nodo_raiz = request.form['nodo_raiz']
+    
+    if nodo_raiz == 'Víctor':
+      query = (
+      "MATCH (n:Family_C) WHERE n.actividad = 'Veterinario' AND n.disgusto = 'Gatos' RETURN n"
+      )
+    elif nodo_raiz == 'Luis':
+      query = (
+      "MATCH (n:Family_B) WHERE n.actividad = 'Veterinario' AND n.disgusto = 'Gatos' RETURN n"
+      )
+    else:
+      query = (
+      "MATCH (n:Family_A) WHERE n.actividad = 'Veterinario' AND n.disgusto = 'Gatos' RETURN n"
+      )
+    
+    nodos = session.run(query)
+    
+    bandera = '5'
+    return render_template('interfaz1.html', nodos = nodos, bandera = bandera, nodo_raiz = nodo_raiz)
+  
   return render_template('interfaz1.html')
 
 
