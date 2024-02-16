@@ -139,6 +139,30 @@ def interfaz1():
     bandera = '5'
     return render_template('interfaz1.html', nodos = nodos, bandera = bandera, nodo_raiz = nodo_raiz)
   
+#Si la opcion es buscar parientes vivos de mayor edad
+  elif request.method == 'POST' and request.form['query'] == '7':
+    nodo_raiz = request.form['nodo_raiz']
+
+    if nodo_raiz == 'Víctor':
+      query = (
+      "MATCH (n:Family_C) WHERE n.defuncion = 'No' AND toInteger(n.edad) >= 60 RETURN n"
+      )
+    elif nodo_raiz == 'Luis':
+      query = (
+      "MATCH (n:Family_B) WHERE n.defuncion = 'No' AND toInteger(n.edad) >= 60 RETURN n"
+      )
+    else:
+      query = (
+      "MATCH (n:Family_A) WHERE n.defuncion = 'No' AND toInteger(n.edad) >= 60 RETURN n"
+      )
+        
+    nodos = session.run(query)
+
+
+    bandera = '6'
+
+    return render_template('interfaz1.html', nodos = nodos, bandera = bandera, nodo_raiz = nodo_raiz)
+  
   return render_template('interfaz1.html')
 
 

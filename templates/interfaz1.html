@@ -141,8 +141,33 @@
 
 {%endif%}
 
+{%if bandera == '6' %}
+<h4 style="text-align: center; padding: 20px ; background-color: white;">Parientes vivos de mayor edad de {{nodo_raiz}}</h4>
+<table>
+  <tr>
 
+    <th>nombre</th>
+    <th>apellido</th>
+    <th>edad</th>
+    <th>gustos</th>
+    <th>disgusto</th>
+    <th>defuncion</th>
+  </tr>
 
+  {%for record in nodos %}
+  <tr>
+    {% set nodo = record['n'] %}
+    <td>{{nodo.get('name')}}</td>
+    <td>{{nodo.get('apellido')}}</td>
+    <td>{{nodo.get('edad')}}</td>
+    <td>{{nodo.get('gustos')}}</td>
+    <td>{{nodo.get('disgusto')}}</td>
+    <td>{{nodo.get('defuncion')}}</td>
+  </tr>
+  {%endfor%}
+</table>
+
+{%endif%}
 
 <div class="pokemon">
   <img src="{{url_for('static', filename='img/bulbasaur.gif')}}" width="10%" height="10%" alt="">
