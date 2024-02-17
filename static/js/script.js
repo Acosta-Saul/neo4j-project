@@ -43,7 +43,7 @@ function visibleInput(){
   let query = document.getElementById('query').value
   let input = document.getElementById('seleccion_nodo_raiz')
   
-  if (query === '2' || query ==='6' || query ==='7' ){
+  if (query === '2' || query ==='3'|| query ==='6' || query ==='7' ){
     input.style.display='inline';
   }else{
     input.style.display='none';

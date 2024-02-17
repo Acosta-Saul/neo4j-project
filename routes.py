@@ -116,6 +116,61 @@ def interfaz1():
     bandera = '2'
     return render_template('interfaz1.html', bandera = bandera, primos_X = primos_X, primos_Y = primos_Y, nodo_ref = nodo_ref, nodo_ref2 = nodo_ref2, nodo_raiz = nodo_raiz)
   
+
+
+#Si la opcion es de la Persona a menos saltos que comparta algún gusto con el padre de alumnoA
+  
+  elif request.method == 'POST' and request.form['query'] == '3':
+    nodo_raiz = request.form['nodo_raiz']
+
+    if nodo_raiz == 'Víctor':
+        query = (
+        "MATCH (n:User {name: 'Víctor'})<-[:PADRE_DE]-(padre) "
+        "WHERE padre.genero = 'M' "
+        "MATCH (z:Family_C) "
+        "WHERE ANY(gusto IN padre.gustos WHERE gusto IN z.gustos) "
+        "AND (padre)-[*1..2]-(z) "
+        "RETURN z"
+    )
+        
+    elif nodo_raiz == 'Luis':
+          query = (
+        "MATCH (n:User {name: 'Luis'})<-[:PADRE_DE]-(padre) "
+        "WHERE padre.genero = 'M' "
+        "MATCH (z:Family_C) "
+        "WHERE ANY(gusto IN padre.gustos WHERE gusto IN z.gustos) "
+        "AND (padre)-[*1..2]-(z) "
+        "RETURN z"
+    )
+    
+    else :
+        query = (
+        "MATCH (n:User {name: 'Saúl'})<-[:PADRE_DE]-(padre) "
+        "WHERE padre.genero = 'M' "
+        "MATCH (z:Family_C) "
+        "WHERE ANY(gusto IN padre.gustos WHERE gusto IN z.gustos) "
+        "AND (padre)-[*1..2]-(z) "
+        "RETURN z"
+    )
+
+    resultado = session.run(query)
+    nodos = [record for record in resultado]  # Convertir resultado en lista
+    
+    # Ahora, también obtén el padre y pásalo al template
+    padre_query = (
+        f"MATCH (n:User {{name: '{nodo_raiz}'}})<-[:PADRE_DE]-(padre) WHERE padre.genero = 'M' "
+        "RETURN padre"
+    )
+    padre_resultado = session.run(padre_query)
+    padre = [record['padre'] for record in padre_resultado][0]  # Obtener el primer resultado (asumiendo que solo hay uno)
+    
+    bandera = '4'
+
+    return render_template('interfaz1.html', nodos=nodos, padre=padre, bandera=bandera, nodo_raiz=nodo_raiz)
+
+
+
+
   
   #Si la opcion es tios masculinos de un amigo que le disguten los gatos y sean veterinarios
   elif request.method == 'POST' and request.form['query'] == '6':
@@ -138,6 +193,8 @@ def interfaz1():
     
     bandera = '5'
     return render_template('interfaz1.html', nodos = nodos, bandera = bandera, nodo_raiz = nodo_raiz)
+  
+
   
 #Si la opcion es buscar parientes vivos de mayor edad
   elif request.method == 'POST' and request.form['query'] == '7':

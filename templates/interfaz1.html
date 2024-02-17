@@ -107,6 +107,59 @@
 </table>
 {% endif %}
 
+{% if bandera == '4' %}
+<h4 style="text-align: center; padding: 20px; background-color: white;">Padre de {{ nodo_raiz }}</h4>
+<table>
+  <tr>
+    <th>Nombre</th>
+    <th>Apellido</th>
+    <th>Edad</th>
+    <th>Gustos</th>
+    <th>Disgusto</th>
+    <th>Defunción</th>
+  </tr>
+
+    <!-- Muestra los datos del padre -->
+    <tr>
+      <td>{{ padre.get('name') }}</td>
+      <td>{{ padre.get('apellido') }}</td>
+      <td>{{ padre.get('edad') }}</td>
+      <td>{{ padre.get('gustos') }}</td>
+      <td>{{ padre.get('disgusto') }}</td>
+      <td>{{ padre.get('defuncion') }}</td>
+    </tr>
+  </table>
+  <br><br>
+<h4 style="text-align: center; padding: 20px; background-color: white;">Persona a menos saltos que comparta algún gusto con el padre de {{ nodo_raiz }}</h4>
+
+<table>
+
+  <tr>
+    <th>Nombre</th>
+    <th>Apellido</th>
+    <th>Edad</th>
+    <th>Gustos</th>
+    <th>Disgusto</th>
+    <th>Defunción</th>
+  </tr>
+
+{% for record in nodos %}
+  <tr>
+    {% set nodo = record['z'] %}
+    <td>{{ nodo.get('name') }}</td>
+    <td>{{ nodo.get('apellido') }}</td>
+    <td>{{ nodo.get('edad') }}</td>
+    <td>{{ nodo.get('gustos') }}</td>
+    <td>{{ nodo.get('disgusto') }}</td>
+    <td>{{ nodo.get('defuncion') }}</td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+{% endif %}
+
+
 
 {%if bandera == '5' %}
 
