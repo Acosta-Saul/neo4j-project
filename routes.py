@@ -212,7 +212,7 @@ def interfaz1():
       query = (
       "MATCH (n:Family_A) WHERE n.defuncion = 'No' AND toInteger(n.edad) >= 60 RETURN n"
       )
-        
+
     nodos = session.run(query)
 
 
@@ -220,6 +220,33 @@ def interfaz1():
 
     return render_template('interfaz1.html', nodos = nodos, bandera = bandera, nodo_raiz = nodo_raiz)
   
+
+
+  elif request.method == 'POST' and request.form['query'] == '8':
+        nodo_raiz = request.form['nodo_raiz']
+
+        # Consulta para encontrar el nodo más lejano sin relaciones salientes
+        query = (
+            f"MATCH (n:User {{name: '{nodo_raiz}'}}) "
+            "WHERE NOT (n)-[]->() "
+            "RETURN n"
+        )
+
+        resultado = session.run(query)
+        nodos_mas_lejanos = [record['n'] for record in resultado]  # Obtener todos los resultados
+
+        if nodos_mas_lejanos:
+            # Si hay resultados, toma el primer nodo
+            nodo_mas_lejano = nodos_mas_lejanos[0]
+
+            bandera = '8'  # Puedes ajustar este valor según tu lógica de banderas
+
+            return render_template('interfaz1.html', nodo_mas_lejano=nodo_mas_lejano, bandera=bandera, nodo_raiz=nodo_raiz)
+        else:
+            # Si no hay resultados, maneja el caso como desees
+            mensaje_error = "No se encontró ningún nodo más lejano."
+            return render_template('interfaz1.html', mensaje_error=mensaje_error)
+
   return render_template('interfaz1.html')
 
 
