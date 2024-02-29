@@ -1,0 +1,177 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: linear-gradient(90deg, rgba(77, 67, 255, 0.15730042016806722) 0%, rgba(158, 223, 255, 1) 100%);
+}
+
+
+div.block {
+  padding: 10px 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+}
+
+ul {
+  margin-right: 20px;
+  display: flex;
+}
+
+li {
+  margin: 0 15px;
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  padding: 10px 20px;
+  color: rgb(52, 52, 52);
+  font-size: 22px;
+  font-weight: 600;
+  transition: .5s;
+}
+
+#logo_neo4j {
+  width: 30%;
+  height: 30%;
+  margin-left: 20px;
+}
+
+.information {
+  width: 100vw;
+  height: 88vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#cuerpo {
+  width: 100%;
+}
+
+.text,
+.image {
+  width: 50%;
+}
+
+.text {
+  margin: 0px 20px;
+}
+
+.image {
+  margin-right: 50px;
+}
+
+a:hover {
+  color: rgb(19, 204, 250);
+}
+
+
+input {
+  border: none;
+  background-color: rgb(156, 209, 255);
+  padding: 5px 10px;
+  margin-bottom: 15px;
+}
+
+
+
+div.container {
+  width: 100vw;
+  height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.formulario {
+  width: 25%;
+  background-color: aliceblue;
+  border-radius: 2px;
+  padding: 10px;
+}
+
+#num {
+  width: 80px;
+}
+
+select {
+  margin: 8px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 10px;
+}
+
+label {
+  font-weight: 600;
+}
+
+button {
+  border: none;
+  padding: 10px 20px;
+  background-color: rgb(99, 203, 255);
+  border-radius: 5px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: .5s;
+}
+
+button:hover {
+  background-color: blue;
+}
+
+.lot {
+  width: 100vw;
+  height: 30vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.sublot {
+  border-radius: 20px 0 20px 0;
+  padding: 20px;
+  width: 65vw;
+  height: 190px;
+  background-color: rgb(255, 255, 255);
+}
+
+select {
+  font-size: 15px;
+}
+
+
+table {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 5px 10px;
+}
+
+
+tr,
+th,
+td {
+  border: 2px solid rgb(24, 157, 246);
+}
+
+.pokemon {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 14px;
+}

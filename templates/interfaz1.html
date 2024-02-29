@@ -1,0 +1,235 @@
+{%extends 'base.html'%}
+{%block title%} Página de Consultas {%endblock%}
+
+{%block content%}
+
+<div class="lot">
+  <div class="sublot">
+    <h1>Consultas</h1>
+    <form action="" method="post">
+      <!-- este select tiene una funcion de JavaScript static/carpeta js/script.js -->
+      <select name="query" id="query" onchange="visibleInput()">
+        <option value="1">Todas las personas que son estudiantes</option>
+        <option value="2">Primos que poseen – los amigos de alumnoA</option>
+        <option value="3">Persona a menos saltos que comparta algún gusto con el padre de alumnoA</option>
+        <option value="6">Tíos masculinos de un amigo que le disgusten los gatos y sean veterinarios.</option>
+        <option value="7">Pariente vivo de mayor edad de cada alumno.</option>
+      </select>
+
+      <input type="text" name="bandera" value="0" hidden id="">
+
+      <div id="seleccion_nodo_raiz" style="display: none;">
+        <!-- Para el caso de que sea la opcion 2 -->
+        <h3>Seleccione un nodo A raiz</h3>
+        <select name="nodo_raiz" id="nodos">
+          <option value="Víctor">Víctor</option>
+          <option value="Luis">Luis</option>
+          <option value="Saúl">Saúl</option>
+        </select>
+      </div>
+
+      <button type="submit">Siguiente</button>
+    </form>
+    <br>
+  </div>
+</div>
+
+{% if bandera == '1'%}
+
+<table>
+  <tr>
+
+    <th>nombre</th>
+    <th>apellido</th>
+    <th>edad</th>
+    <th>gustos</th>
+    <th>disgusto</th>
+    <th>defuncion</th>
+  </tr>
+
+  {%for record in nodos %}
+  <tr>
+    {% set nodo = record['n'] %}
+    <td>{{nodo.get('name')}}</td>
+    <td>{{nodo.get('apellido')}}</td>
+    <td>{{nodo.get('edad')}}</td>
+    <td>{{nodo.get('gustos')}}</td>
+    <td>{{nodo.get('disgusto')}}</td>
+    <td>{{nodo.get('defuncion')}}</td>
+  </tr>
+  {%endfor%}
+</table>
+{% endif %}
+
+{% if bandera == '2'%}
+
+<h4 style="text-align: center; padding: 20px ; background-color: white;">El amigoA es {{nodo_raiz}} | los primos de
+  {{nodo_ref}} y {{nodo_ref2}}
+  son</h4>
+<table>
+  <tr>
+
+    <th>nombre</th>
+    <th>apellido</th>
+    <th>edad</th>
+    <th>gustos</th>
+    <th>disgusto</th>
+    <th>defuncion</th>
+  </tr>
+
+  {%for record in primos_X %}
+  <tr>
+    {% set nodo = record['n'] %}
+    <td>{{nodo.get('name')}}</td>
+    <td>{{nodo.get('apellido')}}</td>
+    <td>{{nodo.get('edad')}}</td>
+    <td>{{nodo.get('gustos')}}</td>
+    <td>{{nodo.get('disgusto')}}</td>
+    <td>{{nodo.get('defuncion')}}</td>
+  </tr>
+  {%endfor%}
+
+  {%for record in primos_Y %}
+  <tr>
+    {% set nodo = record['n'] %}
+    <td>{{nodo.get('name')}}</td>
+    <td>{{nodo.get('apellido')}}</td>
+    <td>{{nodo.get('edad')}}</td>
+    <td>{{nodo.get('gustos')}}</td>
+    <td>{{nodo.get('disgusto')}}</td>
+    <td>{{nodo.get('defuncion')}}</td>
+  </tr>
+  {%endfor%}
+
+</table>
+{% endif %}
+
+{% if bandera == '4' %}
+<h4 style="text-align: center; padding: 20px; background-color: white;">Padre de {{ nodo_raiz }}</h4>
+<table>
+  <tr>
+    <th>Nombre</th>
+    <th>Apellido</th>
+    <th>Edad</th>
+    <th>Gustos</th>
+    <th>Disgusto</th>
+    <th>Defunción</th>
+  </tr>
+
+    <!-- Muestra los datos del padre -->
+    <tr>
+      <td>{{ padre.get('name') }}</td>
+      <td>{{ padre.get('apellido') }}</td>
+      <td>{{ padre.get('edad') }}</td>
+      <td>{{ padre.get('gustos') }}</td>
+      <td>{{ padre.get('disgusto') }}</td>
+      <td>{{ padre.get('defuncion') }}</td>
+    </tr>
+  </table>
+  <br><br>
+<h4 style="text-align: center; padding: 20px; background-color: white;">Persona a menos saltos que comparta algún gusto con el padre de {{ nodo_raiz }}</h4>
+
+<table>
+
+  <tr>
+    <th>Nombre</th>
+    <th>Apellido</th>
+    <th>Edad</th>
+    <th>Gustos</th>
+    <th>Disgusto</th>
+    <th>Defunción</th>
+  </tr>
+
+{% for record in nodos %}
+  <tr>
+    {% set nodo = record['z'] %}
+    <td>{{ nodo.get('name') }}</td>
+    <td>{{ nodo.get('apellido') }}</td>
+    <td>{{ nodo.get('edad') }}</td>
+    <td>{{ nodo.get('gustos') }}</td>
+    <td>{{ nodo.get('disgusto') }}</td>
+    <td>{{ nodo.get('defuncion') }}</td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+{% endif %}
+
+
+
+{%if bandera == '5' %}
+
+<h4 style="text-align: center; padding: 20px ; background-color: white;">Tios masculinos de {{nodo_raiz}} que son
+  Veterinarios y les disgustan los gatos</h4>
+
+
+<table>
+  <tr>
+
+    <th>nombre</th>
+    <th>apellido</th>
+    <th>edad</th>
+    <th>gustos</th>
+    <th>disgusto</th>
+    <th>defuncion</th>
+  </tr>
+
+  {%for record in nodos %}
+  <tr>
+    {% set nodo = record['n'] %}
+    <td>{{nodo.get('name')}}</td>
+    <td>{{nodo.get('apellido')}}</td>
+    <td>{{nodo.get('edad')}}</td>
+    <td>{{nodo.get('gustos')}}</td>
+    <td>{{nodo.get('disgusto')}}</td>
+    <td>{{nodo.get('defuncion')}}</td>
+  </tr>
+  {%endfor%}
+</table>
+
+
+{%endif%}
+
+{%if bandera == '6' %}
+<h4 style="text-align: center; padding: 20px ; background-color: white;">Parientes vivos de mayor edad de {{nodo_raiz}}</h4>
+<table>
+  <tr>
+
+    <th>nombre</th>
+    <th>apellido</th>
+    <th>edad</th>
+    <th>gustos</th>
+    <th>disgusto</th>
+    <th>defuncion</th>
+  </tr>
+
+  {%for record in nodos %}
+  <tr>
+    {% set nodo = record['n'] %}
+    <td>{{nodo.get('name')}}</td>
+    <td>{{nodo.get('apellido')}}</td>
+    <td>{{nodo.get('edad')}}</td>
+    <td>{{nodo.get('gustos')}}</td>
+    <td>{{nodo.get('disgusto')}}</td>
+    <td>{{nodo.get('defuncion')}}</td>
+  </tr>
+  {%endfor%}
+</table>
+
+{%endif%}
+
+
+
+
+
+
+
+
+
+<div class="pokemon">
+  <img src="{{url_for('static', filename='img/bulbasaur.gif')}}" width="10%" height="10%" alt="">
+</div>
+
+
+{%endblock%}
